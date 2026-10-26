@@ -1,7 +1,12 @@
 import axios from "axios";
 
+const apiBaseUrl = import.meta.env.VITE_API_URL
+    || (import.meta.env.PROD
+        ? "https://interview-ai-backend-3ac3.onrender.com"
+        : "http://localhost:3000")
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+    baseURL: apiBaseUrl,
     withCredentials: true,
 })
 
@@ -16,11 +21,7 @@ export const generateInterviewReport = async ({ jobDescription, selfDescription,
     formData.append("selfDescription", selfDescription)
     formData.append("resume", resumeFile)
 
-    const response = await api.post("/api/interview/", formData, {
-        headers: {
-            "Content-Type": "multipart/form-data"
-        }
-    })
+    const response = await api.post("/api/interview/", formData)
 
     return response.data
 

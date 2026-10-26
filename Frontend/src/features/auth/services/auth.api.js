@@ -1,8 +1,12 @@
 import axios from "axios"
 
+const apiBaseUrl = import.meta.env.VITE_API_URL
+    || (import.meta.env.PROD
+        ? "https://interview-ai-backend-3ac3.onrender.com"
+        : "http://localhost:3000")
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+    baseURL: apiBaseUrl,
     withCredentials: true
 })
 
@@ -32,27 +36,11 @@ export async function login({ email, password }) {
 }
 
 export async function logout() {
-    try {
-
-        const response = await api.get("/api/auth/logout")
-
-        return response.data
-
-    } catch (err) {
-
-    }
+    const response = await api.get("/api/auth/logout")
+    return response.data
 }
 
 export async function getMe() {
-
-    try {
-
-        const response = await api.get("/api/auth/get-me")
-
-        return response.data
-
-    } catch (err) {
-        console.log(err)
-    }
-
+    const response = await api.get("/api/auth/get-me")
+    return response.data
 }
