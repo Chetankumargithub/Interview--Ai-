@@ -7,6 +7,7 @@ export const InterviewProvider = ({ children }) => {
     const [loading, setLoading] = useState(false)
     const [report, setReport] = useState(null)
     const [reports, setReports] = useState([])
+    const [reportError, setReportError] = useState(null)
 
     const value = useMemo(() => ({
         loading,
@@ -14,8 +15,10 @@ export const InterviewProvider = ({ children }) => {
         report,
         setReport,
         reports,
-        setReports
-    }), [ loading, report, reports ])
+        setReports,
+        reportError,
+        setReportError
+    }), [ loading, report, reports, reportError ])
 
     return (
         <InterviewContext.Provider value={value}>

@@ -13,7 +13,7 @@ export const useInterview = () => {
         throw new Error("useInterview must be used within an InterviewProvider")
     }
 
-    const { loading, setLoading, report, setReport, reports, setReports } = context
+    const { loading, setLoading, report, setReport, reports, setReports, reportError, setReportError } = context
 
     const generateReport = useCallback(async ({ jobDescription, selfDescription, resumeFile }) => {
         setLoading(true)
@@ -33,17 +33,20 @@ export const useInterview = () => {
 
     const getReportById = useCallback(async (reportId) => {
         setLoading(true)
+        setReport(null)
+        setReportError(null)
         let response = null
         try {
             response = await getInterviewReportById(reportId)
             setReport(response.interviewReport)
+            return response.interviewReport
         } catch (error) {
             console.log(error)
+            setReportError(error)
         } finally {
             setLoading(false)
         }
-        return response?.interviewReport
-    }, [ setLoading, setReport ])
+    }, [ setLoading, setReport, setReportError ])
 
     const getReports = useCallback(async () => {
         setLoading(true)
@@ -73,9 +76,11 @@ export const useInterview = () => {
             link.click()
             link.remove()
             window.setTimeout(() => window.URL.revokeObjectURL(url), 0)
+            return true
         }
         catch (error) {
             console.log(error)
+            throw error
         } finally {
             setLoading(false)
         }
@@ -92,6 +97,7 @@ export const useInterview = () => {
     return useMemo(() => ({
         loading,
         report,
+        reportError,
         reports,
         generateReport,
         getReportById,
@@ -100,6 +106,7 @@ export const useInterview = () => {
     }), [
         loading,
         report,
+        reportError,
         reports,
         generateReport,
         getReportById,
