@@ -1,4 +1,4 @@
-import { createContext,useState } from "react";
+import { createContext, useMemo, useState } from "react";
 
 
 export const InterviewContext = createContext()
@@ -8,8 +8,17 @@ export const InterviewProvider = ({ children }) => {
     const [report, setReport] = useState(null)
     const [reports, setReports] = useState([])
 
+    const value = useMemo(() => ({
+        loading,
+        setLoading,
+        report,
+        setReport,
+        reports,
+        setReports
+    }), [ loading, report, reports ])
+
     return (
-        <InterviewContext.Provider value={{ loading, setLoading, report, setReport, reports, setReports }}>
+        <InterviewContext.Provider value={value}>
             {children}
         </InterviewContext.Provider>
     )

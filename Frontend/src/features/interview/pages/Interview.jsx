@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { memo, useState } from 'react'
 import '../style/interview.scss'
 import { useInterview } from '../hooks/useInterview.js'
-import { useNavigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 
 
 
@@ -12,7 +12,7 @@ const NAV_ITEMS = [
 ]
 
 // ── Sub-components ────────────────────────────────────────────────────────────
-const QuestionCard = ({ item, index }) => {
+const QuestionCard = memo(({ item, index }) => {
     const [ open, setOpen ] = useState(false)
     return (
         <div className='q-card'>
@@ -37,9 +37,9 @@ const QuestionCard = ({ item, index }) => {
             )}
         </div>
     )
-}
+})
 
-const RoadMapDay = ({ day }) => (
+const RoadMapDay = memo(({ day }) => (
     <div className='roadmap-day'>
         <div className='roadmap-day__header'>
             <span className='roadmap-day__badge'>Day {day.day}</span>
@@ -54,21 +54,13 @@ const RoadMapDay = ({ day }) => (
             ))}
         </ul>
     </div>
-)
+))
 
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
     const [ activeNav, setActiveNav ] = useState('technical')
-    const { report, getReportById, loading, getResumePdf } = useInterview()
+    const { report, loading, getResumePdf } = useInterview()
     const { interviewId } = useParams()
-
-    useEffect(() => {
-        if (interviewId) {
-            getReportById(interviewId)
-        }
-    }, [ interviewId ])
-
-
 
     if (loading || !report) {
         return (

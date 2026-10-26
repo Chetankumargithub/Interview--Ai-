@@ -212,6 +212,8 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     background-color: $bg-input;
     border: 2px dashed $border-color;
     border-radius: 0.6rem;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 88px;
     cursor: pointer;
     transition: border-color 0.2s, background-color 0.2s;
 
