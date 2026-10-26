@@ -1,30 +1,48 @@
-const express = require("express")
-const cookieParser = require("cookie-parser")
-const cors = require("cors")
 
-const app = express()
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
-app.use(express.json())
-app.use(cookieParser())
-app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:5174",
-        "http://localhost:5174"
-    ],
-    credentials: true
-}))
+const app = express();
 
-/* require all the routes here */
-const authRouter = require("./routes/auth.routes")
-const interviewRouter = require("./routes/interview.routes")
+// Allow local development and the deployed frontend.
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://localhost:5174",
+    process.env.FRONTEND_URL,
+].filter(Boolean);
 
+app.use(express.json());
+app.use(cookieParser());
 
-/* using all the routes here */
-app.use("/api/auth", authRouter)
-app.use("/api/interview", interviewRouter)
+app.use(
+    cors({
+        origin(origin, callback) {
+            // Allow requests without an Origin header, such as
+            // server-to-server requests and local health checks.
+            if (!origin || allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
 
+            return callback(new Error("Origin not allowed by CORS"));
+        },
+        credentials: true,
+    })
+);
 
+// Health check for deployment verification.
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+});
 
-module.exports = app
+// Import routes.
+const authRouter = require("./routes/auth.routes");
+const interviewRouter = require("./routes/interview.routes");
+
+// Register routes.
+app.use("/api/auth", authRouter);
+app.use("/api/interview", interviewRouter);
+
+module.exports = app;
