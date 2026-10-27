@@ -10,7 +10,7 @@ const MAX_RESUME_SIZE = 3 * 1024 * 1024
 const formatFileSize = (bytes) => `${(bytes / 1024 / 1024).toFixed(2)} MB`
 
 const Home = () => {
-    const { loading, generateReport, reports } = useInterview()
+    const { loading, generateReport, reports, reportError, getReports } = useInterview()
     const { user, handleLogout } = useAuth()
     const navigate = useNavigate()
     const resumeInputRef = useRef(null)
@@ -91,6 +91,11 @@ const Home = () => {
     }
 
     const isGenerationDialogVisible = generationState !== 'idle'
+    const safeReports = Array.isArray(reports) ? reports : []
+    const reportErrorMessage = reportError?.response?.data?.message
+        || (reportError?.message === 'The interview reports response was not valid.'
+            ? 'The reports service returned an unexpected response. Please try again.'
+            : reportError?.message)
 
     return (
         <main className="min-h-dvh overflow-x-hidden bg-[#F7F5F0] text-[#192421]">
@@ -114,6 +119,12 @@ const Home = () => {
                     <h1 id="plan-heading" className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl">Build your interview strategy</h1>
                     <p className="mx-auto mt-4 max-w-2xl text-pretty text-sm leading-6 text-[#65716B] sm:text-base">Share your target role and background to create a personalized interview preparation plan.</p>
                 </section>
+                {reportErrorMessage && (
+                    <div className="mx-auto mt-6 flex max-w-4xl flex-col gap-3 rounded-xl border border-[#D94841]/25 bg-[#D94841]/[0.06] px-4 py-3 text-sm leading-5 text-[#D94841] sm:flex-row sm:items-center sm:justify-between" role="alert">
+                        <span>{reportErrorMessage}</span>
+                        <button className="shrink-0 self-start rounded-lg px-2 py-1 font-semibold underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-[#D94841] sm:self-auto" onClick={getReports} type="button">Try again</button>
+                    </div>
+                )}
 
                 <form className="mx-auto mt-8 max-w-4xl overflow-hidden rounded-3xl border border-[#D6CCC4]/80 bg-white shadow-[0_20px_55px_rgba(25,36,33,0.09)] sm:mt-10" onSubmit={handleGenerateReport} noValidate>
                     <div className="grid gap-8 p-5 sm:p-8 lg:grid-cols-2 lg:gap-10">
@@ -197,11 +208,11 @@ const Home = () => {
                     </div>
                 </form>
 
-                {reports.length > 0 && (
+                {safeReports.length > 0 && (
                     <section className="mx-auto mt-10 max-w-4xl" aria-labelledby="recent-plans-heading">
                         <h2 id="recent-plans-heading" className="mb-4 text-xl font-bold">Recent interview plans</h2>
                         <div className="grid gap-3 sm:grid-cols-2">
-                            {reports.map((report) => (
+                            {safeReports.map((report) => (
                                 <button className="min-w-0 rounded-2xl border border-[#D6CCC4]/80 bg-white p-4 text-left transition-colors hover:border-[#1D6B61]/60 focus:outline-none focus:ring-2 focus:ring-[#1D6B61] focus:ring-offset-2" key={report._id} onClick={() => navigate(`/interview/${report._id}`)} type="button">
                                     <span className="block truncate font-semibold">{report.title || 'Untitled position'}</span>
                                     <span className="mt-2 block text-sm text-[#65716B]">Generated on {new Date(report.createdAt).toLocaleDateString()}</span>

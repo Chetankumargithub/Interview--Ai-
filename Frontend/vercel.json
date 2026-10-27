@@ -3,6 +3,22 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
+      "source": "/api/auth/:path*",
+      "destination": "https://interview-ai-backend-3ac3.onrender.com/api/auth/:path*"
+    },
+    {
+      "source": "/api/interview/",
+      "destination": "https://interview-ai-backend-3ac3.onrender.com/api/interview/"
+    },
+    {
+      "source": "/api/interview",
+      "destination": "https://interview-ai-backend-3ac3.onrender.com/api/interview"
+    },
+    {
+      "source": "/api/interview/:path*",
+      "destination": "https://interview-ai-backend-3ac3.onrender.com/api/interview/:path*"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://interview-ai-backend-3ac3.onrender.com/api/:path*"
     },

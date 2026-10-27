@@ -50,18 +50,27 @@ export const useInterview = () => {
 
     const getReports = useCallback(async () => {
         setLoading(true)
+        setReportError(null)
+        setReports([])
         let response = null
         try {
             response = await getAllInterviewReports()
+            if (!Array.isArray(response?.interviewReports)) {
+                throw new Error("The interview reports response was not valid.")
+            }
+
             setReports(response.interviewReports)
+            return response.interviewReports
         } catch (error) {
             console.log(error)
+            setReports([])
+            setReportError(error)
         } finally {
             setLoading(false)
         }
 
-        return response?.interviewReports
-    }, [ setLoading, setReports ])
+        return []
+    }, [ setLoading, setReportError, setReports ])
 
     const getResumePdf = useCallback(async (interviewReportId) => {
         setLoading(true)
