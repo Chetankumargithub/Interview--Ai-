@@ -1,9 +1,8 @@
 import axios from "axios"
 
-const apiBaseUrl = import.meta.env.VITE_API_URL
-    || (import.meta.env.PROD
-        ? "https://interview-ai-backend-3ac3.onrender.com"
-        : "http://localhost:3000")
+const apiBaseUrl = import.meta.env.PROD
+    ? ""
+    : import.meta.env.VITE_API_URL || "http://localhost:3000"
 
 const api = axios.create({
     baseURL: apiBaseUrl,
